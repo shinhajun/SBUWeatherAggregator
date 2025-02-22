@@ -40,9 +40,10 @@ export default {
 
     const renderCharts = async () => {
       await nextTick();
+      // 기존 차트가 있다면 destroy
       Object.values(charts).forEach(chart => chart && chart.destroy());
 
-      // 마지막 3건
+      // 마지막 3건만 사용
       const last3 = props.weightsHistory.slice(-3);
       const labels = ['2 hours ago', '1 hour ago', 'Now'];
 
@@ -120,6 +121,8 @@ export default {
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
 }
+
+/* 각 차트 셀의 기본 크기 */
 .chart-cell {
   position: relative;
   width: 320px;
@@ -129,8 +132,21 @@ export default {
   border-radius: 6px;
   padding: 4px;
 }
+
+/* 차트는 컨테이너 크기에 맞춰 늘어나도록 설정 */
 canvas {
   width: 100% !important;
   height: 100% !important;
+}
+
+/* 화면이 768px 이하로 작아지면, 한 열에 표시 + 차트 크기도 축소 */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr; /* 한 열로 변경 */
+  }
+  .chart-cell {
+    width: 100%;
+    height: 200px; /* 높이를 조금 줄임 */
+  }
 }
 </style>

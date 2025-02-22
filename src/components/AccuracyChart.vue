@@ -1,9 +1,11 @@
 <template>
   <div class="card mb-3">
-    <div class="card-header bg-primary text-white">Accuracy Chart</div>
-    <div v-if="data && data.length" class="card-body grid-container">
-      <div v-for="provider in providers" :key="provider" class="chart-cell">
-        <canvas :ref="el => setCanvasRef(el, provider)"></canvas>
+    <div class="card-header bg-info text-white">Accuracy Chart</div>
+    <div v-if="data && data.length" class="card-body">
+      <div class="chart-container">
+        <div v-for="provider in providers" :key="provider" class="chart-cell">
+          <canvas :ref="el => setCanvasRef(el, provider)"></canvas>
+        </div>
       </div>
     </div>
     <div v-else class="p-3">
@@ -35,11 +37,12 @@ export default {
 
     const renderCharts = async () => {
       await nextTick();
+      // 기존 차트가 있으면 파괴
       Object.values(charts).forEach(chart => chart && chart.destroy());
 
-      // "최근 3건"만 사용 (필요 시 5건, 10건 등 확대 가능)
+      // "최근 3건"만 사용
       const last3 = props.data.slice(-3);
-      // 임시로 x축 라벨
+      // x축 라벨
       const labels = ['2 hours ago', '1 hour ago', 'Now'];
 
       providers.forEach(provider => {
@@ -56,8 +59,8 @@ export default {
           data: {
             labels,
             datasets: [
-              { label: 'Temp Accuracy', data: tempData, borderColor: 'red',   fill: false },
-              { label: 'Rain Accuracy', data: rainData, borderColor: 'blue',  fill: false },
+              { label: 'Temp Accuracy', data: tempData, borderColor: 'red', fill: false },
+              { label: 'Rain Accuracy', data: rainData, borderColor: 'blue', fill: false },
               { label: 'Snow Accuracy', data: snowData, borderColor: 'green', fill: false }
             ]
           },
@@ -88,20 +91,22 @@ export default {
 </script>
 
 <style scoped>
-.grid-container {
+.chart-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
 }
+
 .chart-cell {
-  position: relative;
-  width: 320px;
+  /* 고정된 비율을 유지하면서 크기를 조정 */
+  width: 100%;
   height: 240px;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 4px;
 }
+
 canvas {
   width: 100% !important;
   height: 100% !important;

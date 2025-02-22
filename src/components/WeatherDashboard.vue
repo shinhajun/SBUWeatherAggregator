@@ -1,6 +1,7 @@
 <template>
   <div class="container my-4">
     <h2 class="mb-3 text-center">Stony Brook Weather Dashboard</h2>
+    <h5 class="mb-3 text-center">Team:something</h5>
 
     <!-- Google Map -->
     <GoogleMap :src="googleMapSrc" />
