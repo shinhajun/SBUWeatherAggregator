@@ -12,7 +12,6 @@
     <WeeklyForecast :forecast="weeklyForecast" />
 
     <!-- Provider Accuracies -->
-    <!-- 정확도는 accuracyData 중 최신값 사용, computeAccuracy 대신 서버 데이터를 활용 -->
     <ProviderAccuracies
       :accuracyData="accuracyData"
       :weights="providerWeights"
@@ -26,7 +25,6 @@
 
     <!-- Refresh Button with Countdown -->
     <div class="text-center mb-3">
-      <!-- 카운트다운 표시 -->
       <button class="btn btn-outline-primary" @click="manualRefresh">
         Refresh ({{ countdown }})
       </button>
@@ -55,31 +53,28 @@ export default {
   },
   data() {
     return {
-      // 서버에서 가져올 주요 데이터들
+      // 백엔드에서 가져올 데이터들
       forecasts: null,
       finalForecast: { temperature: 0, rainProbability: 0, snowProbability: 0 },
       hourlyForecast: {},
       weeklyForecast: [],
-      accuracyData: [],      // 서버의 accuracyHistory
-      providerWeights: {},   // 서버의 현재 가중치
-      weightsHistory: [],    // 서버의 가중치 변화 이력
-
-      // 구글 맵
+      accuracyData: [],
+      providerWeights: {},
+      weightsHistory: [],
+      // Google Map 설정
       googleMapSrc: '',
-
-      // 카운트다운 자동 새로고침
+      // 자동 새로고침용 카운트다운
       countdown: 5,
-      autoRefreshInterval: null
+      autoRefreshInterval: null,
+      // Heroku 백엔드 URL (여기서 자신의 Heroku 앱 URL을 입력)
+      backendBaseUrl: 'https://sbuweather-backend-85bc4d585c0d.herokuapp.com'
     };
   },
   methods: {
-    /**
-     * 서버로부터 모든 데이터를 가져오는 함수
-     */
     async fetchAllData() {
       try {
-        // /api/forecast => forecasts, finalForecast, hourlyForecast, weeklyForecast, weights
-        const forecastResp = await axios.get('http://localhost:3000/api/forecast');
+        // Heroku 백엔드의 /api/forecast 호출
+        const forecastResp = await axios.get(`${this.backendBaseUrl}/api/forecast`);
         const data = forecastResp.data;
         this.forecasts = data.forecasts;
         this.finalForecast = data.finalForecast;
@@ -87,20 +82,17 @@ export default {
         this.weeklyForecast = data.weeklyForecast;
         this.providerWeights = data.weights;
 
-        // 정확도 히스토리 (/api/accuracy)
-        const accResp = await axios.get('http://localhost:3000/api/accuracy');
+        // Heroku 백엔드의 /api/accuracy 호출
+        const accResp = await axios.get(`${this.backendBaseUrl}/api/accuracy`);
         this.accuracyData = accResp.data;
 
-        // 가중치 히스토리 (/api/weights-history)
-        const weightsHistoryResp = await axios.get('http://localhost:3000/api/weights-history');
+        // Heroku 백엔드의 /api/weights-history 호출
+        const weightsHistoryResp = await axios.get(`${this.backendBaseUrl}/api/weights-history`);
         this.weightsHistory = weightsHistoryResp.data;
       } catch (err) {
         console.error('Error fetching data:', err);
       }
     },
-    /**
-     * 데이터가 없을 때 보여줄 더미 예보
-     */
     getDummyHourlyForecast() {
       return {
         temperature: 10.5,
@@ -125,27 +117,18 @@ export default {
         }
       };
     },
-    /**
-     * 수동으로 새로고침 버튼을 눌렀을 때
-     */
     manualRefresh() {
       this.fetchAllData();
-      this.countdown = 5; // 카운트다운 리셋
+      this.countdown = 5;
     },
-    /**
-     * 카운트다운 자동 새로고침
-     */
     startAutoRefresh() {
-      // 혹시 기존 인터벌이 있으면 정리
       if (this.autoRefreshInterval) {
         clearInterval(this.autoRefreshInterval);
       }
-      // 1초마다 카운트다운
       this.autoRefreshInterval = setInterval(() => {
         if (this.countdown > 0) {
           this.countdown--;
         } else {
-          // 카운트가 0이면 새로고침 후 다시 5로 세팅
           this.fetchAllData();
           this.countdown = 5;
         }
@@ -153,16 +136,15 @@ export default {
     }
   },
   mounted() {
-    // 구글 맵 설정
+    // Google Map API 키를 환경변수에서 가져와 설정
     const gKey = import.meta.env.VITE_GOOGLE_MAPS_KEY;
     this.googleMapSrc = `https://www.google.com/maps/embed/v1/place?key=${gKey}&q=Stony+Brook,NY`;
 
-    // 최초 로딩 시 데이터 가져오고, 자동 새로고침 시작
+    // 초기 데이터 로드 및 자동 새로고침 시작
     this.fetchAllData();
     this.startAutoRefresh();
   },
   beforeUnmount() {
-    // 컴포넌트 언마운트 시 인터벌 해제
     if (this.autoRefreshInterval) {
       clearInterval(this.autoRefreshInterval);
     }
