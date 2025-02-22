@@ -35,6 +35,8 @@
 
 <script>
 import axios from 'axios';
+
+// 자식 컴포넌트들 임포트
 import GoogleMap from './GoogleMap.vue';
 import HourlyForecast from './HourlyForecast.vue';
 import WeeklyForecast from './WeeklyForecast.vue';
@@ -55,45 +57,64 @@ export default {
   data() {
     return {
       // 백엔드에서 가져올 데이터들
-      forecasts: null,
-      finalForecast: { temperature: 0, rainProbability: 0, snowProbability: 0 },
-      hourlyForecast: {},
+      finalForecast: {
+        temperature: 0,
+        rainProbability: 0,
+        snowProbability: 0
+      },
+      hourlyForecast: null,
       weeklyForecast: [],
       accuracyData: [],
       providerWeights: {},
       weightsHistory: [],
+      dailyOverview: null, // 혹시 필요하면 사용
+
       // Google Map 설정
       googleMapSrc: '',
+
       // 자동 새로고침용 카운트다운
       countdown: 5,
       autoRefreshInterval: null,
-      // Heroku 백엔드 URL (여기서 자신의 Heroku 앱 URL을 입력)
+
+      // Heroku 백엔드 URL
       backendBaseUrl: 'https://sbuweather-backend-85bc4d585c0d.herokuapp.com'
     };
   },
   methods: {
     async fetchAllData() {
       try {
-        // Heroku 백엔드의 /api/forecast 호출
+        // 1) /api/forecast
         const forecastResp = await axios.get(`${this.backendBaseUrl}/api/forecast`);
         const data = forecastResp.data;
-        this.forecasts = data.forecasts;
-        this.finalForecast = data.finalForecast;
-        this.hourlyForecast = data.hourlyForecast || this.getDummyHourlyForecast();
-        this.weeklyForecast = data.weeklyForecast;
-        this.providerWeights = data.weights;
 
-        // Heroku 백엔드의 /api/accuracy 호출
+        // 백엔드 응답 구조에 맞게 필드 매칭
+        // data.hourlyForecastWithBreakdown가 undefined면 dummy로 대체
+        this.hourlyForecast = data.hourlyForecastWithBreakdown || this.getDummyHourlyForecast();
+
+        this.finalForecast = data.finalForecast || {
+          temperature: 0,
+          rainProbability: 0,
+          snowProbability: 0
+        };
+
+        this.weeklyForecast = data.weeklyForecast || [];
+        this.providerWeights = data.weights || {};
+        this.dailyOverview = data.dailyOverview || null;
+
+        // 2) /api/accuracy
         const accResp = await axios.get(`${this.backendBaseUrl}/api/accuracy`);
-        this.accuracyData = accResp.data;
+        this.accuracyData = accResp.data || [];
 
-        // Heroku 백엔드의 /api/weights-history 호출
+        // 3) /api/weights-history
         const weightsHistoryResp = await axios.get(`${this.backendBaseUrl}/api/weights-history`);
-        this.weightsHistory = weightsHistoryResp.data;
+        this.weightsHistory = weightsHistoryResp.data || [];
+
       } catch (err) {
         console.error('Error fetching data:', err);
       }
     },
+
+    // fallback dummy
     getDummyHourlyForecast() {
       return {
         temperature: 10.5,
@@ -118,10 +139,12 @@ export default {
         }
       };
     },
+
     manualRefresh() {
       this.fetchAllData();
       this.countdown = 5;
     },
+
     startAutoRefresh() {
       if (this.autoRefreshInterval) {
         clearInterval(this.autoRefreshInterval);
@@ -137,11 +160,11 @@ export default {
     }
   },
   mounted() {
-    // Google Map API 키를 환경변수에서 가져와 설정
+    // Google Map API 키를 Vite 환경변수에서 가져와 설정
     const gKey = import.meta.env.VITE_GOOGLE_MAPS_KEY;
     this.googleMapSrc = `https://www.google.com/maps/embed/v1/place?key=${gKey}&q=Stony+Brook,NY`;
 
-    // 초기 데이터 로드 및 자동 새로고침 시작
+    // 초기 데이터 로드 및 자동 새로고침
     this.fetchAllData();
     this.startAutoRefresh();
   },
