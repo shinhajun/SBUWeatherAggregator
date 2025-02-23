@@ -47,7 +47,7 @@ export default {
   },
   data() {
     return {
-      providerList: ['providerNWS', 'providerOWM', 'providerWB']
+      providerList: ['NationalWeatherService', 'OpenWeatherMap', 'WeatherBit']
     };
   },
   methods: {

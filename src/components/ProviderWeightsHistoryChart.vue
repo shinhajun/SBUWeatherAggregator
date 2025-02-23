@@ -1,6 +1,6 @@
 <template>
   <div class="card mb-3">
-    <div class="card-header bg-info text-white">Provider Weights History (Line Charts)</div>
+    <div class="card-header bg-info text-white">Provider Weights History</div>
     <div v-if="weightsHistory && weightsHistory.length" class="card-body grid-container">
       <!-- providers x metrics = 3x3 = 9개의 차트 -->
       <div
@@ -36,7 +36,7 @@ export default {
     }
   },
   setup(props) {
-    const providers = ['providerNWS', 'providerOWM', 'providerWB'];
+    const providers = ['NationalWeatherService', 'OpenWeatherMap', 'WeatherBit'];
     const metrics = ['temp', 'rain', 'snow'];
 
     // canvasRefs: provider-metric => canvas element

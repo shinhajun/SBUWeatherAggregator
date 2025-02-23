@@ -27,7 +27,7 @@ export default {
     }
   },
   setup(props) {
-    const providers = ['providerNWS', 'providerOWM', 'providerWB'];
+    const providers = ['NationalWeatherService', 'OpenWeatherMap', 'WeatherBit'];
     const canvasRefs = {};
     const charts = {};
 
