@@ -56,7 +56,7 @@
               :key="item.provider"
               class="list-group-item d-flex justify-content-between align-items-center"
             >
-              {{ item.provider }}: ({{ item.value }} x {{ item.weight }}) =
+              {{ item.provider }}: ({{ parseFloat(item.value).toFixed(3) }} x {{ item.weight }}) =
               <span>{{ item.contribution.toFixed(2) }}</span>
             </li>
           </ul>
