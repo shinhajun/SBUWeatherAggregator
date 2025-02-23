@@ -1,3 +1,4 @@
+<!-- WeeklyForecast.vue-->
 <template>
   <div class="card mb-3">
     <!-- 헤더에 스위치 추가 -->

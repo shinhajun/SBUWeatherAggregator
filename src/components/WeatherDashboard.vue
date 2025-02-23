@@ -1,3 +1,4 @@
+<!-- WeatherDashboard.vue-->
 <template>
   <div class="container my-4">
     <h2 class="mb-3 text-center">Stony Brook Weather Dashboard</h2>
@@ -122,19 +123,19 @@ export default {
         snowProbability: 0.1,
         calculation: {
           temperature: [
-            { provider: 'NWS', value: 10, weight: 0.33, contribution: 3.3 },
-            { provider: 'OWM', value: 11, weight: 0.33, contribution: 3.63 },
-            { provider: 'WB', value: 10.5, weight: 0.34, contribution: 3.57 }
+            { provider: 'NationalWeatherService', value: 10, weight: 0.33, contribution: 3.3 },
+            { provider: 'OpenWeatherMap', value: 11, weight: 0.33, contribution: 3.63 },
+            { provider: 'WeatherBit', value: 10.5, weight: 0.34, contribution: 3.57 }
           ],
           rainProbability: [
-            { provider: 'NWS', value: 0.1, weight: 0.33, contribution: 0.033 },
-            { provider: 'OWM', value: 0.2, weight: 0.33, contribution: 0.066 },
-            { provider: 'WB', value: 0.25, weight: 0.34, contribution: 0.085 }
+            { provider: 'NationalWeatherService', value: 0.1, weight: 0.33, contribution: 0.033 },
+            { provider: 'OpenWeatherMap', value: 0.2, weight: 0.33, contribution: 0.066 },
+            { provider: 'WeatherBit', value: 0.25, weight: 0.34, contribution: 0.085 }
           ],
           snowProbability: [
-            { provider: 'NWS', value: 0.05, weight: 0.33, contribution: 0.0165 },
-            { provider: 'OWM', value: 0.1, weight: 0.33, contribution: 0.033 },
-            { provider: 'WB', value: 0.15, weight: 0.34, contribution: 0.051 }
+            { provider: 'NationalWeatherService', value: 0.05, weight: 0.33, contribution: 0.0165 },
+            { provider: 'OpenWeatherMap', value: 0.1, weight: 0.33, contribution: 0.033 },
+            { provider: 'WeatherBit', value: 0.15, weight: 0.34, contribution: 0.051 }
           ]
         }
       };

@@ -1,3 +1,4 @@
+<!-- ProviderAccuracies.vue-->
 <template>
   <div class="card mb-3">
     <div class="card-header bg-secondary text-white">Provider Details</div>

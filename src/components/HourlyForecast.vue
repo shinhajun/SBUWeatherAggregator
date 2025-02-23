@@ -1,3 +1,4 @@
+<!-- HourlyForecast.vue-->
 <template>
   <div class="card mb-3">
     <!-- 카드 헤더 (온도 단위 스위치) -->
