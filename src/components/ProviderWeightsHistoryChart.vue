@@ -105,17 +105,17 @@ export default {
     // provider & metric별 라인 색상 지정 (원하는 대로 변경 가능)
     function getColor(provider, metric) {
       const colorMap = {
-        providerNWS: {
+        NationalWeatherService: {
           temp: 'rgba(255, 99, 132, 1)',
           rain: 'rgba(54, 162, 235, 1)',
           snow: 'rgba(75, 192, 192, 1)'
         },
-        providerOWM: {
+        OpenWeatherMap: {
           temp: 'rgba(255, 159, 64, 1)',
           rain: 'rgba(153, 102, 255, 1)',
           snow: 'rgba(255, 205, 86, 1)'
         },
-        providerWB: {
+        WeatherBit: {
           temp: 'rgba(201, 203, 207, 1)',
           rain: 'rgba(100, 149, 237, 1)',
           snow: 'rgba(60, 179, 113, 1)'
